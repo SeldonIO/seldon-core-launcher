@@ -1,0 +1,41 @@
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  cluster_manager.image.name:
+    type: string
+    default: $REGISTRY/seldonio/seldon-core/cluster-manager:$TAG
+    x-google-marketplace:
+      type: IMAGE
+  engine.image.name:
+    type: string
+    default: $REGISTRY/seldonio/seldon-core/engine:$TAG
+    x-google-marketplace:
+      type: IMAGE
+  apife.enabled:
+    type: boolean
+    default: true
+  apife.image.name:
+    type: string
+    default: $REGISTRY/seldonio/seldon-core/apife:$TAG
+    x-google-marketplace:
+      type: IMAGE
+  redis.image.name:
+    type: string
+    default: $REGISTRY/seldonio/seldon-core/redis:$TAG
+    x-google-marketplace:
+      type: IMAGE
+required:
+- name
+- namespace
+- cluster_manager.image.name
+- engine.image.name
+- apife.enabled
+- apife.image.name
+- redis.image.name
+

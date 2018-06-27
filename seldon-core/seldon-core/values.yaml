@@ -1,0 +1,20 @@
+apife:
+  enabled: true
+  image:
+    pull_policy: IfNotPresent
+    name: seldonio/apife:0.1.8-SNAPSHOT
+apife_service_type: NodePort
+cluster_manager:
+  image:
+    pull_policy: IfNotPresent
+    name: seldonio/cluster-manager:0.1.8-SNAPSHOT
+  java_opts: ''
+  spring_opts: ''
+engine:
+  image:
+    name: seldonio/engine:0.1.8-SNAPSHOT
+rbac:
+  enabled: true
+redis:
+  image:
+    name: redis:4.0.1
