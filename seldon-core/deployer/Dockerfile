@@ -3,7 +3,7 @@ FROM launcher.gcr.io/google/debian9 AS build
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gettext
 
-ADD seldon-core /tmp/chart
+ADD seldon-core/helm-charts/seldon-core /tmp/chart
 RUN cd /tmp \
     && tar -czvf /tmp/seldon-core.tar.gz chart
 ADD apptest/deployer/seldon-core /tmp/test/chart

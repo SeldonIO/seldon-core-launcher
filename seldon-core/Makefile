@@ -1,5 +1,5 @@
 #TAG ?= latest
-TAG ?= 0.1.7
+TAG ?= 0.2.1-SNAPSHOT-CRD
 
 # crd.Makefile provides targets to install Application CRD.
 include ../vendor/marketplace-tools/crd.Makefile
@@ -33,12 +33,18 @@ APP_PARAMETERS ?= { \
   "engine.image.name": "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)", \
   "apife.enabled": "true", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
-  "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)" \
+  "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
+  "rbac.service_account.name": "seldon", \
+  "rbac.service_account.create": "false", \
+  "application.enabled": "true" \
 }
 TESTER_IMAGE ?= $(REGISTRY)/example/seldon-core/tester:$(TAG)
 APP_TEST_PARAMETERS ?= { \
   "tester.image": "$(TESTER_IMAGE)" \
 }
+
+app/install::
+	kubectl apply -f apptest/sa.yaml
 
 # Extend the target as defined in app.Makefile to
 # include real dependencies.
@@ -47,18 +53,25 @@ app/build:: .build/seldon-core/deployer \
             .build/seldon-core/engine \
             .build/seldon-core/apife \
             .build/seldon-core/redis \
-            .build/seldon-core/tester
+            .build/seldon-core/tester \
+            .build/seldon-core/updated_helm_values
 
+seldon-core:
+	git clone -b crd_create https://github.com/cliveseldon/seldon-core.git
 
 .build/seldon-core: | .build
 	mkdir -p "$@"
+
+.build/seldon-core/updated_helm_values: seldon-core
+	$(call print_target, $@)
+	python update_helm_chart.py
+	@touch "$@"
 
 .build/seldon-core/deployer: apptest/deployer/* \
                        apptest/deployer/seldon-core/* \
                        apptest/deployer/seldon-core/templates/* \
                        deployer/* \
-                       seldon-core/* \
-                       seldon-core/templates/* \
+		       .build/seldon-core/updated_helm_values \
                        schema.yaml \
                        .build/marketplace/deployer/helm \
                        .build/var/APP_DEPLOYER_IMAGE \
@@ -127,3 +140,9 @@ app/build:: .build/seldon-core/deployer \
 	docker tag redis:4.0.1 "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)"
 	docker push "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)"
 	@touch "$@"
+
+
+.PHONY: clean
+clean_seldon_core:
+	rm -rf seldon-core
+	rm -f .build/seldon-core/updated_helm_values

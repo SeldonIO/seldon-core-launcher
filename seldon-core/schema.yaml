@@ -8,28 +8,58 @@ properties:
     x-google-marketplace:
       type: NAMESPACE
   cluster_manager.image.name:
+    description: Name of the image for the seldon operator  
     type: string
     default: $REGISTRY/seldonio/seldon-core/cluster-manager:$TAG
     x-google-marketplace:
       type: IMAGE
   engine.image.name:
+    description: name of the image for the seldon service orchestrator  
     type: string
     default: $REGISTRY/seldonio/seldon-core/engine:$TAG
     x-google-marketplace:
       type: IMAGE
   apife.enabled:
+    description: Create the Seldon OAUTH API gateway
     type: boolean
     default: true
   apife.image.name:
+    description: Name of the image for the seldon API gateway
     type: string
     default: $REGISTRY/seldonio/seldon-core/apife:$TAG
     x-google-marketplace:
       type: IMAGE
   redis.image.name:
+    description: Name of the image for redis
     type: string
     default: $REGISTRY/seldonio/seldon-core/redis:$TAG
     x-google-marketplace:
       type: IMAGE
+  application.enabled:
+    description: Create Application CR
+    type: boolean
+    default: true
+  rbac.service_account.create:
+    description: Create Service Account
+    type: boolean
+    default: false
+  rbac.service_account.name:
+    title: Seldon Service Account
+    description: >-
+      Name of a service account in the target namespace that
+      has cluster-admin permissions. This is needed for the operator
+      to create Seldon CRD and create namespaced resources
+    type: string
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+        - type: ClusterRole
+          rulesType: PREDEFINED
+          rulesFromRoleName: seldon-crd
+        - type: Role
+          rulesType: PREDEFINED
+          rulesFromRoleName: seldon
 required:
 - name
 - namespace
@@ -38,4 +68,4 @@ required:
 - apife.enabled
 - apife.image.name
 - redis.image.name
-
+- rbac.service_account.name
