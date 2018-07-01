@@ -56,7 +56,7 @@ app/build:: .build/seldon-core/deployer \
             .build/seldon-core/tester \
             .build/seldon-core/updated_helm_values
 
-seldon-core:
+seldon-core: 
 	git clone -b crd_create https://github.com/cliveseldon/seldon-core.git
 
 .build/seldon-core: | .build
@@ -91,8 +91,10 @@ seldon-core:
 
 .build/seldon-core/tester:
 	$(call print_target, $@)
-	docker pull cosmintitei/bash-curl
-	docker tag cosmintitei/bash-curl "$(TESTER_IMAGE)"
+	#docker pull cosmintitei/bash-curl
+	#docker tag cosmintitei/bash-curl "$(TESTER_IMAGE)"
+	docker pull cfmanteiga/alpine-bash-curl-jq
+	docker tag cfmanteiga/alpine-bash-curl-jq "$(TESTER_IMAGE)"
 	docker push "$(TESTER_IMAGE)"
 	@touch "$@"
 

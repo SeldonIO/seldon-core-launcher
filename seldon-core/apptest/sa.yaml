@@ -9,6 +9,7 @@ rules:
   resources:
   - deployments
   - services
+  - pods
   verbs: ["*"]
 - apiGroups:
   - machinelearning.seldon.io

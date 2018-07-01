@@ -3,3 +3,8 @@ service:
   port: 8080
 apife:
   enabled: true
+rbac:
+  enabled: true
+  service_account:
+    create: false
+    name: seldon

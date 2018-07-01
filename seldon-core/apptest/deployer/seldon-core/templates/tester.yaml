@@ -7,6 +7,7 @@ metadata:
   annotations:
     helm.sh/hook: test-success
 spec:
+  serviceAccountName: {{ .Values.rbac.service_account.name }}
   containers:
   - name: tester
     image: "{{ .Values.tester.image }}"
@@ -39,6 +40,29 @@ data:
   apife.enabled: "{{ .Values.apife.enabled }}"
   run.sh: |-
     set -x
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.9.4/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    ./kubectl get deployments
+    ./kubectl create -f /tester/model.json
+    STATUS=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+    until [ "$STATUS" == "true" ]; do
+       echo "Status is $STATUS"
+       sleep 1
+       STATUS=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+    done
+    endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"    
+    TOKEN=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials' | jq ".access_token" -r)
+    http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" --header "Authorization: Bearer $TOKEN" ${endpoint}/api/v0.1/predictions -d '{"data":{"names":["a","b"],"tensor":{"shape":[2,2],"values":[0,0,1,1]}}}' -H "Content-Type: application/json")
+    echo "Expected http status code: 200"
+    echo "Actual http status code: $http_status_code"
+    #./kubectl delete -f /tester/model.json
+    if [[ "$http_status_code" == "200" ]]; then
+      echo SUCCESS
+    else
+      echo FAILURE
+      exit 1
+    fi
+    
     echo "APIFE_ENABLED=$APIFE_ENABLED"
     if [[ "$APIFE_ENABLED" == "true" ]]; then
        endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"
@@ -53,3 +77,57 @@ data:
          exit 1
        fi
     fi
+  model.json: |-
+    {
+    "apiVersion": "machinelearning.seldon.io/v1alpha2",
+    "kind": "SeldonDeployment",
+    "metadata": {
+        "labels": {
+        "app": "seldon"
+        },
+        "name": "seldon-deployment-example"
+    },
+    "spec": {
+        "annotations": {
+        "project_name": "FX Market Prediction",
+        "deployment_version": "v1"
+        },
+        "name": "test-deployment",
+        "oauth_key": "oauth-key",
+        "oauth_secret": "oauth-secret",
+        "predictors": [
+        {
+            "componentSpecs": [{
+            "spec": {
+                "containers": [
+                {
+                    "image": "seldonio/mock_classifier:1.0",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "classifier",
+                    "resources": {
+                    "requests": {
+                        "memory": "1Mi"
+                    }
+                    }
+                }
+                ],
+                "terminationGracePeriodSeconds": 20
+            }
+            }],
+            "graph": {
+            "children": [],
+            "name": "classifier",
+            "endpoint": {
+                "type" : "REST"
+            },
+            "type": "MODEL"
+            },
+            "name": "fx-market-predictor",
+            "replicas": 1,
+            "annotations": {
+            "predictor_version" : "v1"
+            }
+        }
+        ]
+    }
+    }
