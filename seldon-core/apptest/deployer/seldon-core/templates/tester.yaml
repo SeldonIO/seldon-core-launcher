@@ -44,18 +44,22 @@ data:
     chmod +x ./kubectl
     ./kubectl get deployments
     ./kubectl create -f /tester/model.json
-    STATUS=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
-    until [ "$STATUS" == "true" ]; do
-       echo "Status is $STATUS"
+    STATUS1=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+    STATUS2=$(./kubectl get pods -l app=test-deployment-fx-market-predictor-svc-orch -o jsonpath='{.items[0].status.containerStatuses[0].ready}')    
+    until [[ "$STATUS1" == "true" && "$STATUS2" == "true" ]]; do
+       echo "Status1 is $STATUS1 and Status2 is $STATUS2"
        sleep 1
-       STATUS=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+       STATUS1=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+       STATUS2=$(./kubectl get pods -l app=test-deployment-fx-market-predictor-svc-orch -o jsonpath='{.items[0].status.containerStatuses[0].ready}')           
     done
     endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"    
-    TOKEN=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials' | jq ".access_token" -r)
+    TOKENJSON=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials')
+    echo "Token JSON is $TOKENJSON"
+    TOKEN=$(echo $TOKENJSON | jq ".access_token" -r)
     http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" --header "Authorization: Bearer $TOKEN" ${endpoint}/api/v0.1/predictions -d '{"data":{"names":["a","b"],"tensor":{"shape":[2,2],"values":[0,0,1,1]}}}' -H "Content-Type: application/json")
     echo "Expected http status code: 200"
     echo "Actual http status code: $http_status_code"
-    #./kubectl delete -f /tester/model.json
+    ./kubectl delete -f /tester/model.json
     if [[ "$http_status_code" == "200" ]]; then
       echo SUCCESS
     else
