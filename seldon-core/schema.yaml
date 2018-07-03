@@ -56,10 +56,7 @@ properties:
         roles:
         - type: ClusterRole
           rulesType: PREDEFINED
-          rulesFromRoleName: seldon-crd
-        - type: Role
-          rulesType: PREDEFINED
-          rulesFromRoleName: seldon
+          rulesFromRoleName: cluster-admin
 required:
 - name
 - namespace
