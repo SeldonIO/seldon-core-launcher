@@ -52,6 +52,8 @@ data:
        STATUS1=$(./kubectl get pods -l seldon-app-classifier=test-deployment-fx-market-predictor-classifier -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
        STATUS2=$(./kubectl get pods -l app=test-deployment-fx-market-predictor-svc-orch -o jsonpath='{.items[0].status.containerStatuses[0].ready}')           
     done
+    echo "Sleeping a bit more"
+    sleep 5
     endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"    
     TOKENJSON=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials')
     echo "Token JSON is $TOKENJSON"
