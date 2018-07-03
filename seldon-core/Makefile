@@ -62,7 +62,7 @@ seldon-core:
 .build/seldon-core: | .build
 	mkdir -p "$@"
 
-.build/seldon-core/updated_helm_values: seldon-core
+.build/seldon-core/updated_helm_values: .build/seldon-core seldon-core
 	$(call print_target, $@)
 	python update_helm_chart.py
 	@touch "$@"
@@ -91,8 +91,6 @@ seldon-core:
 
 .build/seldon-core/tester:
 	$(call print_target, $@)
-	#docker pull cosmintitei/bash-curl
-	#docker tag cosmintitei/bash-curl "$(TESTER_IMAGE)"
 	docker pull cfmanteiga/alpine-bash-curl-jq
 	docker tag cfmanteiga/alpine-bash-curl-jq "$(TESTER_IMAGE)"
 	docker push "$(TESTER_IMAGE)"
@@ -106,8 +104,8 @@ seldon-core:
                     | .build/seldon-core
 	$(call print_target, $@)
 	docker pull seldonio/cluster-manager:$(TAG)
-	docker tag seldonio/cluster-manager:$(TAG) "$(REGISTRY)/seldonio/seldon-core/cluster-manager:$(TAG)"
-	docker push "$(REGISTRY)/seldonio/seldon-core/cluster-manager:$(TAG)"
+	docker tag seldonio/cluster-manager:$(TAG) "$(REGISTRY)/seldonio/seldon-core:$(TAG)"
+	docker push "$(REGISTRY)/seldonio/seldon-core:$(TAG)"
 	@touch "$@"
 
 # Simulate building of engine. Actually just copying public image to
