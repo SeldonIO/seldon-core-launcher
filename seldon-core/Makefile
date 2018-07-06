@@ -33,6 +33,9 @@ APP_PARAMETERS ?= { \
   "engine.image.name": "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)", \
   "apife.enabled": "true", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
+  "ambassador.enabled": "true", \
+  "ambassador.image.name": "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)", \
+  "ambassador.statsd.image.name": "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)", \
   "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
   "rbac.service_account.name": "seldon", \
   "rbac.service_account.create": "false", \
@@ -52,19 +55,25 @@ app/build:: .build/seldon-core/deployer \
             .build/seldon-core/cluster-manager \
             .build/seldon-core/engine \
             .build/seldon-core/apife \
+            .build/seldon-core/ambassador \
+            .build/seldon-core/prom-statsd-exporter \
             .build/seldon-core/redis \
             .build/seldon-core/tester \
             .build/seldon-core/updated_helm_values
 
+#FIXME set release branch to clone from when dev stage os over
 seldon-core: 
-	git clone -b crd_create https://github.com/cliveseldon/seldon-core.git
+	git clone https://github.com/SeldonIO/seldon-core.git
 
 .build/seldon-core: | .build
 	mkdir -p "$@"
 
-.build/seldon-core/updated_helm_values: .build/seldon-core seldon-core
+seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
+	cp resources/application.yaml seldon-core/helm-charts/seldon-core/templates/application.yaml
+
+.build/seldon-core/updated_helm_values: | .build/seldon-core seldon-core seldon-core/helm-charts/seldon-core/templates/application.yaml
 	$(call print_target, $@)
-	python update_helm_chart.py
+	python scripts/update_helm_chart.py
 	@touch "$@"
 
 .build/seldon-core/deployer: apptest/deployer/* \
@@ -130,7 +139,29 @@ seldon-core:
 	docker push "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)"
 	@touch "$@"
 
-# Simulate building of apife. Actually just copying public image to
+# Simulate building of ambassador. Actually just copying public image to
+# local registry.
+.build/seldon-core/ambassador: .build/var/REGISTRY \
+                    .build/var/TAG \
+                    | .build/seldon-core
+	$(call print_target, $@)
+	docker pull quay.io/datawire/ambassador:0.35.1
+	docker tag quay.io/datawire/ambassador:0.35.1 "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)"
+	docker push "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)"
+	@touch "$@"
+
+# Simulate building of ambassador prom statsd exporter. Actually just copying public image to
+# local registry.
+.build/seldon-core/prom-statsd-exporter: .build/var/REGISTRY \
+                    .build/var/TAG \
+                    | .build/seldon-core
+	$(call print_target, $@)
+	docker pull datawire/prom-statsd-exporter:0.6.0
+	docker tag datawire/prom-statsd-exporter:0.6.0 "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)"
+	docker push "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)"
+	@touch "$@"
+
+# Simulate building of redis. Actually just copying public image to
 # local registry.
 .build/seldon-core/redis: .build/var/REGISTRY \
                     .build/var/TAG \

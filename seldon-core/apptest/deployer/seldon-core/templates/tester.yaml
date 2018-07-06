@@ -17,6 +17,11 @@ spec:
         configMapKeyRef:
           name: "{{ .Release.Name }}-test"
           key: apife.enabled
+    - name: AMBASSADOR_ENABLED
+      valueFrom:
+        configMapKeyRef:
+          name: "{{ .Release.Name }}-test"
+          key: ambassador.enabled
     volumeMounts:
     - name: config-volume
       mountPath: /tester
@@ -38,6 +43,7 @@ metadata:
     marketplace.cloud.google.com/verification: test
 data:
   apife.enabled: "{{ .Values.apife.enabled }}"
+  ambassador.enabled: "{{ .Values.ambassador.enabled }}"  
   run.sh: |-
     set -x
     curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.9.4/bin/linux/amd64/kubectl
@@ -54,35 +60,42 @@ data:
     done
     echo "Sleeping a bit more"
     sleep 5
-    endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"    
-    TOKENJSON=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials')
-    echo "Token JSON is $TOKENJSON"
-    TOKEN=$(echo $TOKENJSON | jq ".access_token" -r)
-    http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" --header "Authorization: Bearer $TOKEN" ${endpoint}/api/v0.1/predictions -d '{"data":{"names":["a","b"],"tensor":{"shape":[2,2],"values":[0,0,1,1]}}}' -H "Content-Type: application/json")
-    echo "Expected http status code: 200"
-    echo "Actual http status code: $http_status_code"
-    ./kubectl delete -f /tester/model.json
-    if [[ "$http_status_code" == "200" ]]; then
-      echo SUCCESS
-    else
-      echo FAILURE
-      exit 1
-    fi
-    
-    echo "APIFE_ENABLED=$APIFE_ENABLED"
-    if [[ "$APIFE_ENABLED" == "true" ]]; then
-       endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"
-       echo GET $endpoint
-       http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" $endpoint)
+
+    echo "AMBASSADOR_ENABLED=$AMBASSADOR_ENABLED"
+    if [[ "$AMBASSADOR_ENABLED" == "true" ]]; then
+       endpoint="http://{{ .Release.Name }}-ambassador:{{ .Values.service.port }}/seldon/seldon-deployment-example"
+       http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" ${endpoint}/api/v0.1/predictions -d '{"data":{"names":["a","b"],"tensor":{"shape":[2,2],"values":[0,0,1,1]}}}' -H "Content-Type: application/json")
        echo "Expected http status code: 200"
        echo "Actual http status code: $http_status_code"
        if [[ "$http_status_code" == "200" ]]; then
          echo SUCCESS
        else
          echo FAILURE
+         ./kubectl delete -f /tester/model.json
          exit 1
        fi
     fi
+
+    echo "APIFE_ENABLED=$APIFE_ENABLED"
+    if [[ "$APIFE_ENABLED" == "true" ]]; then
+
+       endpoint="http://{{ .Release.Name }}-seldon-apiserver:{{ .Values.service.port }}"    
+       TOKENJSON=$(curl -XPOST -u oauth-key:oauth-secret ${endpoint}/oauth/token -d 'grant_type=client_credentials')
+       echo "Token JSON is $TOKENJSON"
+       TOKEN=$(echo $TOKENJSON | jq ".access_token" -r)
+       http_status_code=$(curl -o /dev/null -s -w "%{http_code}\n" --header "Authorization: Bearer $TOKEN" ${endpoint}/api/v0.1/predictions -d '{"data":{"names":["a","b"],"tensor":{"shape":[2,2],"values":[0,0,1,1]}}}' -H "Content-Type: application/json")
+       echo "Expected http status code: 200"
+       echo "Actual http status code: $http_status_code"
+       if [[ "$http_status_code" == "200" ]]; then
+         echo SUCCESS
+       else
+         echo FAILURE
+         ./kubectl delete -f /tester/model.json
+         exit 1
+       fi    
+    fi
+
+    ./kubectl delete -f /tester/model.json
   model.json: |-
     {
     "apiVersion": "machinelearning.seldon.io/v1alpha2",

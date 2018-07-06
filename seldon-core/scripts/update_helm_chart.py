@@ -22,8 +22,8 @@ def update_values_yaml_file(fpath):
 
     d = yaml_to_dict(yaml_data)
     d['rbac']['service_account']['create'] = False
-    d['application']['enabled'] = True
-
+    d['rbac']['rolebinding']['create'] = False
+    
     with open(fpath, 'w') as f:
         f.write(dict_to_yaml(d))
 
