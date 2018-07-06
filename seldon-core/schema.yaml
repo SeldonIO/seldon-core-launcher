@@ -23,6 +23,10 @@ properties:
     description: Create the Seldon OAUTH API gateway
     type: boolean
     default: true
+  apife.service_type:
+    description: Service type for Seldon API Gateway
+    type: string
+    default: NodePort
   apife.image.name:
     description: Name of the image for the seldon API gateway
     type: string
@@ -33,6 +37,10 @@ properties:
     description: Create the Ambassador Reverse Proxy
     type: boolean
     default: true
+  ambassador.service_type:
+    description: Service type for Ambassador
+    type: string
+    default: NodePort
   ambassador.image.name:
     description: Name of the image for the Ambassador Reverse Proxy
     type: string

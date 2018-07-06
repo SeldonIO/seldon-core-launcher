@@ -32,8 +32,10 @@ APP_PARAMETERS ?= { \
   "cluster_manager.image.name": "$(REGISTRY)/seldonio/seldon-core/cluster-manager:$(TAG)", \
   "engine.image.name": "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)", \
   "apife.enabled": "true", \
+  "apife.service_type": "NodePort", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
   "ambassador.enabled": "true", \
+  "ambassador.service_type": "NodePort", \
   "ambassador.image.name": "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)", \
   "ambassador.statsd.image.name": "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)", \
   "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
