@@ -33,26 +33,6 @@ properties:
     default: $REGISTRY/seldonio/seldon-core/apife:$TAG
     x-google-marketplace:
       type: IMAGE
-  ambassador.enabled:
-    description: Create the Ambassador Reverse Proxy
-    type: boolean
-    default: true
-  ambassador.service_type:
-    description: Service type for Ambassador
-    type: string
-    default: NodePort
-  ambassador.image.name:
-    description: Name of the image for the Ambassador Reverse Proxy
-    type: string
-    default: $REGISTRY/seldonio/seldon-core/ambassador:$TAG
-    x-google-marketplace:
-      type: IMAGE
-  ambassador.statsd.image.name:
-    description: Name of the image for the Ambassador Prometheus Statsd Exporter
-    type: string
-    default: $REGISTRY/seldonio/seldon-core/prom-statsd-exporter:$TAG
-    x-google-marketplace:
-      type: IMAGE
   redis.image.name:
     description: Name of the image for redis
     type: string
@@ -88,8 +68,5 @@ required:
 - engine.image.name
 - apife.enabled
 - apife.image.name
-- ambassador.enabled
-- ambassador.image.name
-- ambassador.statsd.image.name
 - redis.image.name
 - rbac.service_account.name

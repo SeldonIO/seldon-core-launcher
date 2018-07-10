@@ -1,5 +1,5 @@
 #TAG ?= latest
-TAG ?= 0.2.1-SNAPSHOT-CRD
+TAG ?= 0.2.2-SNAPSHOT
 
 # crd.Makefile provides targets to install Application CRD.
 include ../vendor/marketplace-tools/crd.Makefile
@@ -29,19 +29,14 @@ NAME ?= seldon-core-1
 APP_PARAMETERS ?= { \
   "name": "$(NAME)", \
   "namespace": "$(NAMESPACE)", \
-  "cluster_manager.image.name": "$(REGISTRY)/seldonio/seldon-core/cluster-manager:$(TAG)", \
+  "cluster_manager.image.name": "$(REGISTRY)/seldonio/seldon-core:$(TAG)", \
   "engine.image.name": "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)", \
   "apife.enabled": "true", \
   "apife.service_type": "NodePort", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
-  "ambassador.enabled": "true", \
-  "ambassador.service_type": "NodePort", \
-  "ambassador.image.name": "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)", \
-  "ambassador.statsd.image.name": "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)", \
   "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
   "rbac.service_account.name": "seldon", \
-  "rbac.service_account.create": "false", \
-  "application.enabled": "true" \
+  "rbac.service_account.create": "false" \
 }
 TESTER_IMAGE ?= $(REGISTRY)/example/seldon-core/tester:$(TAG)
 APP_TEST_PARAMETERS ?= { \
@@ -57,8 +52,6 @@ app/build:: .build/seldon-core/deployer \
             .build/seldon-core/cluster-manager \
             .build/seldon-core/engine \
             .build/seldon-core/apife \
-            .build/seldon-core/ambassador \
-            .build/seldon-core/prom-statsd-exporter \
             .build/seldon-core/redis \
             .build/seldon-core/tester \
             .build/seldon-core/updated_helm_values
@@ -84,6 +77,7 @@ seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
                        deployer/* \
 		       .build/seldon-core/updated_helm_values \
                        schema.yaml \
+			seldon-core \
                        .build/marketplace/deployer/helm \
                        .build/var/APP_DEPLOYER_IMAGE \
                        .build/var/REGISTRY \
@@ -141,36 +135,14 @@ seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
 	docker push "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)"
 	@touch "$@"
 
-# Simulate building of ambassador. Actually just copying public image to
-# local registry.
-.build/seldon-core/ambassador: .build/var/REGISTRY \
-                    .build/var/TAG \
-                    | .build/seldon-core
-	$(call print_target, $@)
-	docker pull quay.io/datawire/ambassador:0.35.1
-	docker tag quay.io/datawire/ambassador:0.35.1 "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)"
-	docker push "$(REGISTRY)/seldonio/seldon-core/ambassador:$(TAG)"
-	@touch "$@"
-
-# Simulate building of ambassador prom statsd exporter. Actually just copying public image to
-# local registry.
-.build/seldon-core/prom-statsd-exporter: .build/var/REGISTRY \
-                    .build/var/TAG \
-                    | .build/seldon-core
-	$(call print_target, $@)
-	docker pull datawire/prom-statsd-exporter:0.6.0
-	docker tag datawire/prom-statsd-exporter:0.6.0 "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)"
-	docker push "$(REGISTRY)/seldonio/seldon-core/prom-statsd-exporter:$(TAG)"
-	@touch "$@"
-
 # Simulate building of redis. Actually just copying public image to
 # local registry.
 .build/seldon-core/redis: .build/var/REGISTRY \
                     .build/var/TAG \
                     | .build/seldon-core
 	$(call print_target, $@)
-	docker pull redis:4.0.1
-	docker tag redis:4.0.1 "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)"
+	docker pull launcher.gcr.io/google/redis4:4.0
+	docker tag launcher.gcr.io/google/redis4:4.0 "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)"
 	docker push "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)"
 	@touch "$@"
 
