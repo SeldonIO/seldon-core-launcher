@@ -1,5 +1,5 @@
-#TAG ?= latest
-TAG ?= 0.2.2-SNAPSHOT
+TAG ?= 0.2.2
+PULL_TAG ?= 0.2.2-SNAPSHOT
 
 # crd.Makefile provides targets to install Application CRD.
 include ../vendor/marketplace-tools/crd.Makefile
@@ -106,10 +106,11 @@ seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
 # local registry.
 .build/seldon-core/cluster-manager: .build/var/REGISTRY \
                     .build/var/TAG \
+                    .build/seldon-core/updated_helm_values \
                     | .build/seldon-core
 	$(call print_target, $@)
-	docker pull seldonio/cluster-manager:$(TAG)
-	docker tag seldonio/cluster-manager:$(TAG) "$(REGISTRY)/seldonio/seldon-core:$(TAG)"
+	docker pull seldonio/cluster-manager:$(PULL_TAG)
+	docker tag seldonio/cluster-manager:$(PULL_TAG) "$(REGISTRY)/seldonio/seldon-core:$(TAG)"
 	docker push "$(REGISTRY)/seldonio/seldon-core:$(TAG)"
 	@touch "$@"
 
@@ -117,10 +118,11 @@ seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
 # local registry.
 .build/seldon-core/engine: .build/var/REGISTRY \
                     .build/var/TAG \
+		    .build/seldon-core/updated_helm_values \
                     | .build/seldon-core
 	$(call print_target, $@)
-	docker pull seldonio/engine:$(TAG)
-	docker tag seldonio/engine:$(TAG) "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)"
+	docker pull seldonio/engine:$(PULL_TAG)
+	docker tag seldonio/engine:$(PULL_TAG) "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)"
 	docker push "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)"
 	@touch "$@"
 
@@ -128,10 +130,11 @@ seldon-core/helm-charts/seldon-core/templates/application.yaml: seldon-core
 # local registry.
 .build/seldon-core/apife: .build/var/REGISTRY \
                     .build/var/TAG \
+                    .build/seldon-core/updated_helm_values \
                     | .build/seldon-core
 	$(call print_target, $@)
-	docker pull seldonio/apife:$(TAG)
-	docker tag seldonio/apife:$(TAG) "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)"
+	docker pull seldonio/apife:$(PULL_TAG)
+	docker tag seldonio/apife:$(PULL_TAG) "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)"
 	docker push "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)"
 	@touch "$@"
 
