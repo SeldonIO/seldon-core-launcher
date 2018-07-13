@@ -1,10 +1,14 @@
 # Overview
 
-This is the core installer for GCP Launcher. As a user if you wish to install seldon-core on a kubernetes cluster you should follow the docs at https://github.com/SeldonIO/seldon-core. 
+This is the core installer for GCP Launcher. Depending on your use case you have several ways to install seldon-core on your Kubernetes cluster.
 
-If you wish to install and test or develop the core deployer for seldon-core on GCP Launcher then you can follow the instructions below. 
+  * For one click installation of seldon core onto a kubernetes cluster use the Google Marketplace UI.
+  * As a user if you wish to install seldon-core on a kubernetes cluster you can follow the docs at https://github.com/SeldonIO/seldon-core which has [installation instructions](https://github.com/SeldonIO/seldon-core/blob/master/docs/install.md) using Helm or Ksonnet.
+  * If you wish to install, test or develop the core deployer for seldon-core on GCP MarketPlace then you can follow the instructions below which will create seldon-core in the same way as the GCP MarketPlace but using the CLI.
 
 ## Create a cluster
+
+Create a kubernetes cluster and ensure you have a cluster-admin role.
 
 ```
 CLUSTER=cluster-1
@@ -28,12 +32,12 @@ kubectl create clusterrolebinding cluster-admin-binding \
 kubectl proxy
 ```
 
-## Setting up GCR
+## Set up GCR
 
 Enable the API:
 https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
 
-## Updating git submodules
+## Update git submodules
 
 This repo utilizies git submodules. This repo should typically be included in your
 application repo as a submodule as well. Run the following commands to make sure that
@@ -45,7 +49,7 @@ git submodule sync --recursive
 git submodule update --recursive --init --force
 ```
 
-## Development Testing
+## Install Seldon-Core
 
 ```
 make clean clean_seldon_core
@@ -57,14 +61,61 @@ Install the CRD (needs to be run just once)
 make crd/install
 ```
 
+Setup a service account that has cluster-admin permissions. To create the default service account "seldon", use:
+
+```
+export NAMESPACE=default
+cat resources/svc_account.yaml | envsubst | kubectl apply -f -
+```
+
 Install the latest seldon-core using the GCP Deployer image on your cluster.
 
 ```
 make app/install
 ```
 
-Install and run a test
+Or install and run a test
 
 ```
 make app/install-test
 ```
+
+## Configuration
+
+You can configure several parameters via environment variables:
+
+    * NAME : Name of the application
+    * NAMESPACE : Namespace to start the application
+    * REGISTRY : The Docker registry to use
+    * TAG : The image tag to use
+    * APIFE_ENABLED : Whether to create the API gateway - should always be true for now
+    * APIFE_SVC_TYPE : API Gateway service type, e.g. NodePort or LoadBalancer
+    * SVC_ACCOUNT : Service Account to use
+
+For example:
+
+```
+export NAMESPACE=seldon
+make app/install
+```
+
+## Basic Usage
+
+For many example and usage of seldon-core see our main docs at https://github.com/SeldonIO/seldon-core
+
+## Delete
+
+To delete the current app run
+
+```
+make app/uninstall
+```
+
+Ensure you delete the service account if you created it.
+
+```
+cat resources/svc_account.yaml | envsubst | kubectl delete -f -
+```
+
+
+

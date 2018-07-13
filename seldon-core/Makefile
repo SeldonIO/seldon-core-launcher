@@ -26,16 +26,19 @@ include ../vendor/marketplace-tools/app.Makefile
 
 APP_DEPLOYER_IMAGE ?= $(REGISTRY)/seldonio/seldon-core/deployer:$(TAG)
 NAME ?= seldon-core-1
+APIFE_ENABLED ?= true
+APIFE_SVC_TYPE ?= NodePort
+SVC_ACCOUNT ?= seldon
 APP_PARAMETERS ?= { \
   "name": "$(NAME)", \
   "namespace": "$(NAMESPACE)", \
   "cluster_manager.image.name": "$(REGISTRY)/seldonio/seldon-core:$(TAG)", \
   "engine.image.name": "$(REGISTRY)/seldonio/seldon-core/engine:$(TAG)", \
-  "apife.enabled": "true", \
-  "apife.service_type": "NodePort", \
+  "apife.enabled": "$(APIFE_ENABLED)", \
+  "apife.service_type": "$(APIFE_SVC_TYPE)", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
   "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
-  "rbac.service_account.name": "seldon" \
+  "rbac.service_account.name": "$(SVC_ACCOUNT)" \
 }
 TESTER_IMAGE ?= $(REGISTRY)/example/seldon-core/tester:$(TAG)
 APP_TEST_PARAMETERS ?= { \
@@ -43,7 +46,7 @@ APP_TEST_PARAMETERS ?= { \
 }
 
 app/install::
-	kubectl apply -f resources/svc_account.yaml
+	export NAMESPACE=${NAMESPACE} && cat resources/svc_account.yaml | envsubst | kubectl apply -f -
 
 # Extend the target as defined in app.Makefile to
 # include real dependencies.

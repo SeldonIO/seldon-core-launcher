@@ -8,43 +8,43 @@ properties:
     x-google-marketplace:
       type: NAMESPACE
   cluster_manager.image.name:
-    description: Name of the image for the seldon operator  
+    description: Name of the image for the Seldon operator.
     type: string
     default: $REGISTRY/seldonio/seldon-core:$TAG
     x-google-marketplace:
       type: IMAGE
   engine.image.name:
-    description: name of the image for the seldon service orchestrator  
+    description: Name of the image for the Seldon service orchestrator  .
     type: string
     default: $REGISTRY/seldonio/seldon-core/engine:$TAG
     x-google-marketplace:
       type: IMAGE
   apife.enabled:
-    description: Create the Seldon OAUTH API gateway
+    description: Create the Seldon OAUTH API gateway. Should be always set for now.
     type: boolean
     default: true
   apife.service_type:
-    description: Service type for Seldon API Gateway
+    description: Service type for Seldon API Gateway. Examples are NodePort, LoadBalancer.
     type: string
     default: NodePort
   apife.image.name:
-    description: Name of the image for the seldon API gateway
+    description: Name of the image for the seldon API gateway.
     type: string
     default: $REGISTRY/seldonio/seldon-core/apife:$TAG
     x-google-marketplace:
       type: IMAGE
   redis.image.name:
-    description: Name of the image for redis
+    description: Name of the image for redis.
     type: string
     default: $REGISTRY/seldonio/seldon-core/redis:$TAG
     x-google-marketplace:
       type: IMAGE
   application.enabled:
-    description: Create Application CR
+    description: Create Application Custom resource. Should always be set.
     type: boolean
     default: true
   rbac.service_account.name:
-    title: Seldon Service Account
+    title: Seldon Service Account.
     description: >-
       Name of a service account in the target namespace that
       has cluster-admin permissions. This is needed for the operator
