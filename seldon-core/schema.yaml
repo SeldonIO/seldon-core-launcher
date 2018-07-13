@@ -10,7 +10,7 @@ properties:
   cluster_manager.image.name:
     description: Name of the image for the seldon operator  
     type: string
-    default: $REGISTRY/seldonio/seldon-core/cluster-manager:$TAG
+    default: $REGISTRY/seldonio/seldon-core:$TAG
     x-google-marketplace:
       type: IMAGE
   engine.image.name:
