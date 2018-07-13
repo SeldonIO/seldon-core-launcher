@@ -1,53 +1,70 @@
 # Overview
 
-Seldon-Core provides machine learning deployment for Kubernetes.
+This is the core installer for GCP Launcher. As a user if you wish to install seldon-core on a kubernetes cluster you should follow the docs at https://github.com/SeldonIO/seldon-core. 
 
- - Allows data scientists to create models using any machine learning toolkit or programming language. We plan to initially cover the tools/languages below:
-   - Python based models including
-     - Tensorflow models
-     - Sklearn models
-   - Spark models
-   - H2O models
-   - R models
- - Exposes machine learning models via REST and gRPC automatically when deployed for easy integration into business apps that need predictions.
- - Allows complex runtime inference graphs to be deployed as microservices. These graphs can be composed of:
-   - Models - runtime inference executable for machine learning models
-   - Routers - route API requests to sub-graphs. Examples: AB Tests, Multi-Armed Bandits.
-   - Combiners - combine the responses from sub-graphs. Examples: ensembles of models
-   - Transformers - transform request or responses. Example: transform feature requests.
- - Handles full lifecycle management of the deployed model:
-    - Updating the runtime graph with no downtime
-    - Scaling
-    - Monitoring
+If you wish to install and test or develop the core deployer for seldon-core on GCP Launcher then you can follow the instructions below. 
 
-# Installation
+## Create a cluster
 
-## Quick Install - FIXME
-
-## Command line instructions
-
-### Prerequisites
-
-- Setup cluster
-  - Permissions
-- Setup kubectl
-- Setup helm
-- Install Application Resource
-
-### Commands
-
-Set environment variables (modify if necessary):
 ```
-export APP_INSTANCE_NAME=seldon-1
-export NAMESPACE=default
+CLUSTER=cluster-1
+ZONE=us-west1-a
+
+# Create the cluster.
+gcloud beta container clusters create "$CLUSTER" \
+    --zone "$ZONE" \
+    --machine-type "n1-standard-1" \
+    --num-nodes "3"
+
+# Configure kubectl authorization.
+gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE"
+
+# Bootstrap RBAC cluster-admin for your user.
+# More info: https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole cluster-admin --user $(gcloud config get-value account)
+
+# (Optional) Start up kubectl proxy.
+kubectl proxy
 ```
 
-Expand manifest template:
-```
-helm template . --set APP_INSTANCE_NAME=$APP_INSTANCE_NAME,NAMESPACE=$NAMESPACE > expanded.yaml
+## Setting up GCR
+
+Enable the API:
+https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
+
+## Updating git submodules
+
+This repo utilizies git submodules. This repo should typically be included in your
+application repo as a submodule as well. Run the following commands to make sure that
+all submodules are properly populated. `git clone` does not populate submodules by
+default.
+
+```shell
+git submodule sync --recursive
+git submodule update --recursive --init --force
 ```
 
-Run kubectl:
+## Development Testing
+
 ```
-kubectl apply -f expanded.yaml
+make clean clean_seldon_core
+```
+
+Install the CRD (needs to be run just once)
+
+```
+make crd/install
+```
+
+Install the latest seldon-core using the GCP Deployer image on your cluster.
+
+```
+make app/install
+```
+
+Install and run a test
+
+```
+make app/install-test
 ```

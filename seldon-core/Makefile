@@ -35,8 +35,7 @@ APP_PARAMETERS ?= { \
   "apife.service_type": "NodePort", \
   "apife.image.name": "$(REGISTRY)/seldonio/seldon-core/apife:$(TAG)", \
   "redis.image.name": "$(REGISTRY)/seldonio/seldon-core/redis:$(TAG)", \
-  "rbac.service_account.name": "seldon", \
-  "rbac.service_account.create": "false" \
+  "rbac.service_account.name": "seldon" \
 }
 TESTER_IMAGE ?= $(REGISTRY)/example/seldon-core/tester:$(TAG)
 APP_TEST_PARAMETERS ?= { \
@@ -44,7 +43,7 @@ APP_TEST_PARAMETERS ?= { \
 }
 
 app/install::
-	kubectl apply -f apptest/sa.yaml
+	kubectl apply -f resources/svc_account.yaml
 
 # Extend the target as defined in app.Makefile to
 # include real dependencies.

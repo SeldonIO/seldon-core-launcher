@@ -43,10 +43,6 @@ properties:
     description: Create Application CR
     type: boolean
     default: true
-  rbac.service_account.create:
-    description: Create Service Account
-    type: boolean
-    default: false
   rbac.service_account.name:
     title: Seldon Service Account
     description: >-
