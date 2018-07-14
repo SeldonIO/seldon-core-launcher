@@ -45,8 +45,17 @@ APP_TEST_PARAMETERS ?= { \
   "tester.image": "$(TESTER_IMAGE)" \
 }
 
-app/install::
+.PHONY: remove_svc_account
+remove_svc_account:
+	export NAMESPACE=${NAMESPACE} && cat resources/svc_account.yaml | envsubst | kubectl delete -f -
+
+.PHONY: create_svc_account
+create_svc_account:
 	export NAMESPACE=${NAMESPACE} && cat resources/svc_account.yaml | envsubst | kubectl apply -f -
+
+app/install:: create_svc_account
+
+app/install-test:: create_svc_account
 
 # Extend the target as defined in app.Makefile to
 # include real dependencies.

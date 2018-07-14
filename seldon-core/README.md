@@ -61,13 +61,6 @@ Install the CRD (needs to be run just once)
 make crd/install
 ```
 
-Setup a service account that has cluster-admin permissions. To create the default service account "seldon", use:
-
-```
-export NAMESPACE=default
-cat resources/svc_account.yaml | envsubst | kubectl apply -f -
-```
-
 Install the latest seldon-core using the GCP Deployer image on your cluster.
 
 ```
@@ -111,10 +104,10 @@ To delete the current app run
 make app/uninstall
 ```
 
-Ensure you delete the service account if you created it.
+Ensure you delete the service account.
 
 ```
-cat resources/svc_account.yaml | envsubst | kubectl delete -f -
+make remove_svc_account
 ```
 
 
