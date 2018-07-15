@@ -17,7 +17,7 @@ spec:
     description: |-
       Machine learning deployment
 
-      # Support
+      # Getting Started and Support
       Visit [Seldon-Core on Github](https://github.com/SeldonIO/seldon-core).
     maintainers:
     - name: Seldon

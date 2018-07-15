@@ -15,17 +15,23 @@ properties:
     x-google-marketplace:
       type: IMAGE
   engine.image.name:
-    description: Name of the image for the Seldon service orchestrator  .
+    description: Name of the image for the Seldon service orchestrator.
     type: string
     default: $REGISTRY/seldonio/seldon-core/engine:$TAG
     x-google-marketplace:
       type: IMAGE
   apife.enabled:
-    description: Create the Seldon OAUTH API gateway. Should be always set for now.
+    title: Install Seldon OAuth Gateway
+    description: >-
+      Create the Seldon OAUTH API gateway ingress. This will allow you
+      to use OAuth authentication for your REST and gRPC endpoints for your
+      machine learning deployments. Should be always set for now.
     type: boolean
     default: true
   apife.service_type:
-    description: Service type for Seldon API Gateway. Examples are NodePort, LoadBalancer.
+    title: Service Type for Seldon OAuth Gateway
+    description: >-
+      Service type for Seldon API Gateway. Examples are NodePort or LoadBalancer.
     type: string
     default: NodePort
   apife.image.name:
@@ -40,16 +46,12 @@ properties:
     default: $REGISTRY/seldonio/seldon-core/redis:$TAG
     x-google-marketplace:
       type: IMAGE
-  application.enabled:
-    description: Create Application Custom resource. Should always be set.
-    type: boolean
-    default: true
   rbac.service_account.name:
     title: Seldon Service Account.
     description: >-
       Name of a service account in the target namespace that
       has cluster-admin permissions. This is needed for the operator
-      to create Seldon CRD and create namespaced resources
+      to create Seldon CRD and create namespaced resources.
     type: string
     x-google-marketplace:
       type: SERVICE_ACCOUNT
@@ -64,6 +66,7 @@ required:
 - cluster_manager.image.name
 - engine.image.name
 - apife.enabled
+- apife.service_type
 - apife.image.name
 - redis.image.name
 - rbac.service_account.name
