@@ -1,10 +1,14 @@
-# Overview
+![seldon](./seldon.png)
 
-This is the core installer for GCP Launcher. Depending on your use case you have several ways to install seldon-core on your Kubernetes cluster.
+Welcome to Seldon-Core. If you have just installed Seldon via the Google Marketplace you can jump straight away to the [getting started docs](https://github.com/SeldonIO/seldon-core/blob/master/docs/getting_started/readme.md) in the central [seldon-core project](https://github.com/SeldonIO/seldon-core). If you wish to install Seldon from the command line using the same tools as the Marketplace UI uses read on.
+
+# Installation Options
+
+This is the core installer for Google Marketplace. Depending on your use case you have several ways to install seldon-core on your Kubernetes cluster.
 
   * For one click installation of seldon core onto a kubernetes cluster use the Google Marketplace UI.
   * As a user if you wish to install seldon-core on a kubernetes cluster you can follow the docs at https://github.com/SeldonIO/seldon-core which has [installation instructions](https://github.com/SeldonIO/seldon-core/blob/master/docs/install.md) using Helm or Ksonnet.
-  * If you wish to install, test or develop the core deployer for seldon-core on GCP MarketPlace then you can follow the instructions below which will create seldon-core in the same way as the GCP MarketPlace but using the CLI.
+  * If you wish to install, test or develop the core deployer for seldon-core on GCP Marketplace then you can follow the instructions below which will create seldon-core in the same way as the GCP Marketplace but using the CLI.
 
 ## Create a cluster
 
@@ -77,13 +81,13 @@ make app/install-test
 
 You can configure several parameters via environment variables:
 
-    * NAME : Name of the application
-    * NAMESPACE : Namespace to start the application
-    * REGISTRY : The Docker registry to use
-    * TAG : The image tag to use
-    * APIFE_ENABLED : Whether to create the API gateway - should always be true for now
-    * APIFE_SVC_TYPE : API Gateway service type, e.g. NodePort or LoadBalancer
-    * SVC_ACCOUNT : Service Account to use
+ * NAME : Name of the application
+ * NAMESPACE : Namespace to start the application
+ * REGISTRY : The Docker registry to use
+ * TAG : The image tag to use
+ * APIFE_ENABLED : Whether to create the API gateway - should always be true for now
+ * APIFE_SVC_TYPE : API Gateway service type, e.g. NodePort or LoadBalancer
+ * SVC_ACCOUNT : Service Account to use
 
 For example:
 
