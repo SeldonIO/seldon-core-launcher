@@ -15,10 +15,12 @@ spec:
     type: Seldon-Core
     version: '{{ .Chart.Version }}'
     description: |-
-      Machine learning deployment
+      Machine learning deployment.
 
-      # Getting Started and Support
-      Visit [Seldon-Core on Github](https://github.com/SeldonIO/seldon-core).
+      #Getting staryed
+      Getting started : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/README.md
+      # Details about seldon-core
+      Visit Seldon-Core on Github : https://github.com/SeldonIO/seldon-core.
     maintainers:
     - name: Seldon
       url: https://seldon.io
