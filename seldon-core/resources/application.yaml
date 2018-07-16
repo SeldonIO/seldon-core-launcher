@@ -29,9 +29,9 @@ spec:
       url: https://github.com/SeldonIO/seldon-core
     notes: |-
       # Next steps
-      Deploy a pre-trained model : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/deployment/deploy.ipynb
+      [Deploy a pre-trained model](https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/deployment/deploy.ipynb)
 
-      Wrap your own model and deploy it : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/wrap-model/wrap_model.ipynb
+      [Wrap your own model and deploy it](https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/wrap-model/wrap_model.ipynb)
   selector:
     matchLabels:
       app.kubernetes.io/name: "{{ .Release.Name }}"
