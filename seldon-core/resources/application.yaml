@@ -15,19 +15,23 @@ spec:
     type: Seldon-Core
     version: '{{ .Chart.Version }}'
     description: |-
-      Machine learning deployment.
+      Machine Learning Deployment on Kubernetes.
 
-      #Getting staryed
-      Getting started : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/README.md
-      # Details about seldon-core
-      Visit Seldon-Core on Github : https://github.com/SeldonIO/seldon-core.
+      Seldon Core is an open-source framework that makes it easier and faster to deploy machine learning models and experiments at scale on Kubernetes. Serve your models built in any open-source or commercial model building framework. Leverage powerful Kubernetes features like Custom Resource Definitions to manage model graphs, which can contain one or more models as well as A/B tests, ensembles and feature transformations. Connect your continuous integration and deployment (CI/CD) tools to scale and update your deployment.
     maintainers:
     - name: Seldon
       url: https://seldon.io
       email: dev@seldon.io
     links:
     - description: Getting Started
+      url: https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/README.md
+    - description: Open source project page
       url: https://github.com/SeldonIO/seldon-core
+    notes: |-
+      # Next steps
+      Deploy a pre-trained model : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/deployment/deploy.ipynb
+
+      Wrap your own model and deploy it : https://github.com/SeldonIO/seldon-core-launcher/blob/master/seldon-core/getting_started/wrap-model/wrap_model.ipynb
   selector:
     matchLabels:
       app.kubernetes.io/name: "{{ .Release.Name }}"
