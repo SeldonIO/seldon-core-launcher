@@ -1,3 +1,5 @@
 *~
 seldon-core/.build
 seldon-core/seldon-core
+seldon-core/getting_started/wrap-model/IrisClassifier.sav
+.ipynb_checkpoints
