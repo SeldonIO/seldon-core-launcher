@@ -39,7 +39,7 @@ If you have just installed Seldon via the Google Marketplace you can jump straig
 You can read more detailed [getting started docs](https://github.com/SeldonIO/seldon-core/blob/master/docs/getting_started/readme.md) in the central [seldon-core project](https://github.com/SeldonIO/seldon-core).
 
 
-If you wish to install Seldon from the command line using the same tools as the Marketplace UI uses you can view the docs [here](custom-install.md).
+If you wish to install Seldon from the command line using the same tools as the Google Marketplace UI uses but on a non-GCP cluster or want to customize your install you can view the docs [here](custom-install.md).
 
 
 
