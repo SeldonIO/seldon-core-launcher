@@ -2,9 +2,8 @@
 
 This is the core installer for Google Marketplace. Depending on your use case you have several ways to install seldon-core on your Kubernetes cluster.
 
-  * For one click installation of seldon core onto a kubernetes cluster use the Google Marketplace UI.
   * As a user if you wish to install seldon-core on a kubernetes cluster you can follow the docs at https://github.com/SeldonIO/seldon-core which has [installation instructions](https://github.com/SeldonIO/seldon-core/blob/master/docs/install.md) using Helm or Ksonnet.
-  * If you wish to install onto a non-GCP Kubernetes cluster or want to customize your install then you can follow the instructions below which will create seldon-core in the same way as the GCP Marketplace but using the CLI.
+  * If you wish to install onto a non-GCP Kubernetes cluster using the same install mechanism that GCP uses or want to customize your install on GCP then you can follow the instructions below:
 
 ## Create a cluster
 
@@ -96,7 +95,7 @@ make app/install
 
 ## Basic Usage
 
-For many example and usage of seldon-core see our main docs at https://github.com/SeldonIO/seldon-core
+For further guides in using seldon-core see our main docs at https://github.com/SeldonIO/seldon-core
 
 ## Delete
 
