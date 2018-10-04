@@ -1,5 +1,5 @@
-TAG ?= 0.2.2
-PULL_TAG ?= 0.2.2-SNAPSHOT
+TAG ?= 0.2.3
+PULL_TAG ?= 0.2.3
 
 # crd.Makefile provides targets to install Application CRD.
 include ../vendor/marketplace-tools/crd.Makefile
