@@ -1,4 +1,4 @@
-TAG ?= 0.2.3
+TAG ?= 0.2
 PULL_TAG ?= 0.2.3
 
 # crd.Makefile provides targets to install Application CRD.
