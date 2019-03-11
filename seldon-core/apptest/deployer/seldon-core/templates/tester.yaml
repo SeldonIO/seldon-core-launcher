@@ -50,11 +50,11 @@ data:
     chmod +x ./kubectl
     ./kubectl get deployments
     ./kubectl create -f /tester/model.json
-    STATUS1=$(./kubectl get pods -l seldon-app=test-deployment -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+    STATUS1=$(./kubectl get pods -l seldon-app=test-deployment-seldon-deployment-example -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
     until [[ "$STATUS1" == "true" ]]; do
        echo "Status1 is $STATUS1"
        sleep 1
-       STATUS1=$(./kubectl get pods -l seldon-app=test-deployment -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
+       STATUS1=$(./kubectl get pods -l seldon-app=test-deployment-seldon-deployment-example -o jsonpath='{.items[0].status.containerStatuses[0].ready}')
     done
     echo "Sleeping a bit more"
     sleep 5

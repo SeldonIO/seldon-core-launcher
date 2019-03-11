@@ -1,6 +1,6 @@
 # Seldon Release Process
 
-Internal Seldon release process.
+Internal Seldon release process. (linux only - not MacOS and python 3 only)
  1. Start a new Kubernetes cluster in launcher-testing project
  1. ```make crd/install```
  1. Update TAG and PULL_TAG in Makefile
