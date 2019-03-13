@@ -58,7 +58,7 @@ app/build:: .build/seldon-core/deployer \
 
 #FIXME set release branch to clone from when dev stage os over
 seldon-core: 
-	git clone https://github.com/SeldonIO/seldon-core.git
+	git clone -b v$(PULL_TAG) --single-branch https://github.com/SeldonIO/seldon-core.git
 
 .build/seldon-core: | .build
 	mkdir -p "$@"
